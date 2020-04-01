@@ -15,6 +15,7 @@ import torch.nn.functional as F
 from torch.autograd import *
 import misc.utils as utils
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class CaptionModel(nn.Module):
     def __init__(self):
@@ -121,7 +122,7 @@ class CaptionModel(nn.Module):
 
             # encode as vectors
             it = beam_seq[t]
-            logprobs, state = self.get_logprobs_state(Variable(it.cuda()), *(args + (state,)))
+            logprobs, state = self.get_logprobs_state(Variable(it.to(device=device)), *(args + (state,)))
 
         done_beams = sorted(done_beams, key=lambda x: -x['p'])[:beam_size]
         return done_beams

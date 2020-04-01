@@ -10,6 +10,8 @@ import misc.utils as utils
 
 from .CaptionModel import CaptionModel
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 class LSTMCore(nn.Module):
     def __init__(self, opt):
         super(LSTMCore, self).__init__()
@@ -176,7 +178,7 @@ class FCModel(CaptionModel):
                     else:
                         # scale logprobs by temperature
                         prob_prev = torch.exp(torch.div(logprobs.data, temperature)).cpu()
-                    it = torch.multinomial(prob_prev, 1).cuda()
+                    it = torch.multinomial(prob_prev, 1).to(device=device)
                     sampleLogprobs = logprobs.gather(1, Variable(it, requires_grad=False)) # gather the logprobs at sampled positions
                     it = it.view(-1).long() # and flatten indices for downstream processing
 

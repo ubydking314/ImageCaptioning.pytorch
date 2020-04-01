@@ -16,6 +16,8 @@ import os
 import sys
 import misc.utils as utils
 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 def language_eval(dataset, preds, model_id, split):
     import sys
     if 'coco' in dataset:
@@ -86,7 +88,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             # forward the model to get loss
             tmp = [data['fc_feats'], data['att_feats'], data['labels'], data['masks']]
             with torch.no_grad():
-                tmp = [Variable(torch.from_numpy(_)).cuda() for _ in tmp]
+                tmp = [Variable(torch.from_numpy(_)).to(device=device) for _ in tmp]
                 fc_feats, att_feats, labels, masks = tmp
 
                 loss = crit(model(fc_feats, att_feats, labels), labels[:,1:], masks[:,1:]).item()
@@ -98,7 +100,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
         tmp = [data['fc_feats'][np.arange(loader.batch_size) * loader.seq_per_img], 
             data['att_feats'][np.arange(loader.batch_size) * loader.seq_per_img]]
         with torch.no_grad():
-            tmp = [Variable(torch.from_numpy(_)).cuda() for _ in tmp]
+            tmp = [Variable(torch.from_numpy(_)).to(device=device) for _ in tmp]
             fc_feats, att_feats = tmp
             # forward the model to also get generated samples for each image
             seq, _ = model.sample(fc_feats, att_feats, eval_kwargs)

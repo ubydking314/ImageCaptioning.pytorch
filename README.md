@@ -1,5 +1,18 @@
 # ImageCaptioning.pytorch
 
+This is a fork of [Rotian Luo's ImageCaptioning repo](https://github.com/ruotianluo/ImageCaptioning.pytorch), adapted for the Deep Learning with PyTorch book (Manning).
+
+Notable changes:
+
+* Python 3.6+
+* PyTorch 1.3+
+* CPU and GPU support
+* a set of weights is provided in the repo to facilitate getting up to speed
+
+Following are the original notes.
+
+# ImageCaptioning.pytorch
+
 This is an image captioning codebase in PyTorch. If you are familiar with neuraltalk2, here are the differences compared to neuraltalk2.
 - Instead of using random split, we use [karpathy's train-val-test split](http://cs.stanford.edu/people/karpathy/deepimagesent/caption_datasets.zip).
 - Instead of including the convnet in the model, we use preprocessed features. (finetuneable cnn version is in the branch **with_finetune**)

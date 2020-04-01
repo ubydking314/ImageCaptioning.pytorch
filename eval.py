@@ -18,6 +18,7 @@ import eval_utils
 import argparse
 import misc.utils as utils
 import torch
+import shutil
 
 # Input arguments and options
 parser = argparse.ArgumentParser()
@@ -73,9 +74,19 @@ parser.add_argument('--id', type=str, default='',
 
 opt = parser.parse_args()
 
+cnn_model_weights = './data/imagenet_weights/' + opt.cnn_model + '.pth'
+if not os.path.isfile(cnn_model_weights):
+    chunk1 = './data/imagenet_weights/' + opt.cnn_model + 'a.pth'
+    chunk2 = './data/imagenet_weights/' + opt.cnn_model + 'b.pth'
+    with open(cnn_model_weights,'wb') as destination:
+        with open(chunk1,'rb') as source:
+            shutil.copyfileobj(source, destination)
+        with open(chunk2,'rb') as source:
+            shutil.copyfileobj(source, destination)
+
 # Load infos
 with open(opt.infos_path, 'rb') as f:
-    infos = cPickle.load(f)
+    infos = cPickle.load(f, encoding='latin1')
 
 # override and collect parameters
 if len(opt.input_fc_dir) == 0:
@@ -100,8 +111,7 @@ vocab = infos['vocab'] # ix -> word mapping
 
 # Setup the model
 model = models.setup(opt)
-model.load_state_dict(torch.load(opt.model))
-model.cuda()
+model.load_state_dict(torch.load(opt.model, map_location=torch.device(device)))
 model.eval()
 crit = utils.LanguageModelCriterion()
 

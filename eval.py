@@ -109,9 +109,13 @@ for k in vars(infos['opt']).keys():
 
 vocab = infos['vocab'] # ix -> word mapping
 
+#check for GPU
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 # Setup the model
 model = models.setup(opt)
 model.load_state_dict(torch.load(opt.model, map_location=torch.device(device)))
+model.to(device=device)
 model.eval()
 crit = utils.LanguageModelCriterion()
 
